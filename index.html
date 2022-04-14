@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuron.js</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nuron.js" />
+  <meta name="twitter:description" content="Nuron RPC JavaScript client" />
+  <meta name="twitter:image" content="https://nuronjs.cell.computer/nuronjs.png" />
+  <meta property="og:url" content="https://nuronjs.cell.computer" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nuron.js" />
+  <meta property="og:description" content="Nuron RPC Javascript client" />
+  <meta property="og:image" content="https://nuronjs.cell.computer/nuronjs.png" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="nuron.js" />
+  <meta name="twitter:description" content="Nuron RPC client for JavaScript" />
+  <meta name="twitter:image" content="https://nuronjs.cell.computer/nuronjs.png" />
+  <meta property="og:url" content="https://nuronjs.cell.computer" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="nuron.js" />
+  <meta property="og:description" content="Nuron RPC client for JavaScript" />
+  <meta property="og:image" content="https://nuronjs.cell.computer/nuronjs.png" />
+
+  <meta name="description" content="nuron.js">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: '',
+      repo: '',
+      maxLevel: 3,
+      themeColor: "cornflowerblue",
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        let el = document.querySelector("#" + location.hash.split("=")[1])
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({top: y});
+        }
+      }, 1500)
+    })
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+</body>
+</html>
