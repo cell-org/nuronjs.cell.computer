@@ -622,8 +622,9 @@ let unsignedToken = await nuron.token.build(body)
 
 - `body`: The same `body` payload as the `description.body` argument of the [c0js](https://c0js.cell.computer)'s `build()` method.
   - `cid`: **(required)** the IPFS CID of the token metadata. This is the only mandatory attribute of the `body` attribute.
-  - `minter`: specify a single minter. if not specified, anyone can mint.
-  - `price`: specify the price for the token. if not specified, free mint.
+  - `sender`: specify the address allowed to submit this to the blockchain for minting. if not specified, anyone can mint.
+  - `receiver`: specify the address that will receive the token when the token is minted. If not specified, whoever successfully submits the minting transaction will receive by default.
+  - `value`: specify the value required to mint the token. if not specified, free mint.
   - `start`: from when is this token valid?
     - if `start` is specified, the token cannot be minted to the host contract until that time.
     - if not specified, it's considered valid anytime, and can be minted to the contract anytime.
@@ -633,8 +634,8 @@ let unsignedToken = await nuron.token.build(body)
   - `royaltyReceiver`: the royalty receiver address of this token. whenever a sale is made, NFT marketplaces that follow the EIP-2981 NFT royalty standard will send royalty to this address.
   - `royaltyAmount`: the amount of royalty (out of 1,000,000) the `royaltyReceiver` will receive for each NFT sale.
     - for example, if set as `100,000`, the royalty is 100,000/1,000,000 = 10%.
-  - `minters`: an array of addresses for which the minting of this token is allowed.
-    - when you pass the `minters` array, the `build()` method automatically creates a merkle root of the list and includes it in the returned token as an attribute named `merkleHash`.
+  - `senders`: an array of addresses for which the minting of this token is allowed.
+    - when you pass the `senders` array, the `build()` method automatically creates a merkle root of the list and includes it in the returned token as an attribute named `merkleHash`.
   - `puzzle`: a string that is required for minting.
     - when you pass thte `puzzle` attribute for the `build()` method, it creates a sha3 hash of the `puzzle` string and includes it in the returned token as an attribute named `puzzleHash`. The token DOES NOT include the original `puzzle` string.
     - anyone who can come up with the exact same string that hashes to the resulting `puzzleHash` can mint.
@@ -665,7 +666,7 @@ Let's create a token that requires 1ETH payment for minting:
 ```javascript
 let unsignedToken = await nuron.token.build({
   cid: cid,
-  price: 10 ** 18                                         // 10^18wei => 1ETH
+  value: 10 ** 18                                         // 10^18wei => 1ETH
 })
 ```
 
@@ -673,12 +674,12 @@ let unsignedToken = await nuron.token.build({
 
 sometimes you want to allow anyone from a group to mint a single token, first come first served basis.
 
-The difference with the `minter` attribute is that the `minter` directly specifies a single address that can mint, whereas `minters` is an array, and anyone from this array can mint but only one will succeed. Here's an example:
+The difference with the `sender` attribute is that the `sender` directly specifies a single address that can mint, whereas `senders` is an array, and anyone from this array can mint but only one will succeed. Here's an example:
 
 ```javascript
 let signedToken = await c0.token.create({
   cid: cid,
-  minters: [
+  senders: [
     address0,
     address1,
     address2
@@ -1235,13 +1236,43 @@ Build a static site that renders all the tokens and the minting pages
 #### syntax
 
 ```javascript
-await nuron.web.build()
+await nuron.web.build(config)
 ```
 
 ##### parameters
 
-- none
+- `config`: optional configuration parameter
+  - `templates`: an array of template file mappings (optional)
 
 ##### return value
 
 - none
+
+
+#### examples
+
+##### default templates
+
+by default you do not have to pass any specific payload. nuron will automatically build the minting site using its own default templates.
+
+```javascript
+await nuron.web.build()
+```
+
+##### custom templates
+
+You can specify custom templates for `index.html` and `token.html`:
+
+
+```javascript
+await nuron.web.build({
+  templates: [{
+    src: "https://templateserver.com/index.ejs",      // example EJS template file location
+    dest: "index.html"                                // renders to the index.html file
+  }, {
+    src: "https://templateserver.com/token.ejs",      // example EJS template file location
+    dest: "token.html"                                // renders to the token.html file
+  }]
+})
+```
+
