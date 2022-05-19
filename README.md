@@ -620,25 +620,7 @@ let unsignedToken = await nuron.token.build(body)
 
 ##### parameters
 
-- `body`: The same `body` payload as the `description.body` argument of the [c0js](https://c0js.cell.computer)'s `build()` method.
-  - `cid`: **(required)** the IPFS CID of the token metadata. This is the only mandatory attribute of the `body` attribute.
-  - `sender`: specify the address allowed to submit this to the blockchain for minting. if not specified, anyone can mint.
-  - `receiver`: specify the address that will receive the token when the token is minted. If not specified, whoever successfully submits the minting transaction will receive by default.
-  - `value`: specify the value required to mint the token. if not specified, free mint.
-  - `start`: from when is this token valid?
-    - if `start` is specified, the token cannot be minted to the host contract until that time.
-    - if not specified, it's considered valid anytime, and can be minted to the contract anytime.
-  - `end`: until when is this token valid?
-    - if `end` is specified, trying to mint to the host contract after that time will fail.
-    - if not specified, it's valid anytime, and can be minted to the contract anytime.
-  - `royaltyReceiver`: the royalty receiver address of this token. whenever a sale is made, NFT marketplaces that follow the EIP-2981 NFT royalty standard will send royalty to this address.
-  - `royaltyAmount`: the amount of royalty (out of 1,000,000) the `royaltyReceiver` will receive for each NFT sale.
-    - for example, if set as `100,000`, the royalty is 100,000/1,000,000 = 10%.
-  - `senders`: an array of addresses for which the minting of this token is allowed.
-    - when you pass the `senders` array, the `build()` method automatically creates a merkle root of the list and includes it in the returned token as an attribute named `merkleHash`.
-  - `puzzle`: a string that is required for minting.
-    - when you pass thte `puzzle` attribute for the `build()` method, it creates a sha3 hash of the `puzzle` string and includes it in the returned token as an attribute named `puzzleHash`. The token DOES NOT include the original `puzzle` string.
-    - anyone who can come up with the exact same string that hashes to the resulting `puzzleHash` can mint.
+- `body`: The same `body` payload as the `description.body` argument of the [c0js build() method](https://c0js.cell.computer/#/?id=_21-build)
 
 ##### return value
 
