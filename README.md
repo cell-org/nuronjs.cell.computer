@@ -93,12 +93,24 @@ const nuron = new Nuron(config)
     - `address`: the NFT contract address. All tokens created with this nuron instance can only be minted to this contract address.
     - `chainId`: the chainId (which host blockchain will the NFTs be stored on?). In case of Ethereum mainnet, it's 1. In case of Rinkeby testnet, it's 4. Learn more about chainIds here: https://chainlist.org/
     - `name`: the name of the NFT contract. this MUST match the name of the Cell contract you're trying to mint to.
+  - `node`: **(optional)** specify a custom nuron node endpoint. If not specified, all requests will assume a local node and make requests to http://localhost:42000. When using a custom node endpoint, it is recommended to use [Nuronpress](https://nuronpress.cell.computer) instead of directly exposing the naked Nuron, since Nuronpress only allows authenticated requests.
+    - `workspace`: the endpoint to store all the workspace files. all `nuron.fs`, `nuron.db`, and `nuron.web` methods will make requests to this endpoint. Must contain both of the following attributes:
+      - `url`: The workspace endpoint host url
+      - `token`: The access token for making secure requests to the host url (powered by [Nuronpress](https://nuronpress.cell.computer))
+    - `wallet`: the endpoint that hosts the wallet to sign messages with. all `nuron.token` and `nuron.wallet` methods will make requests to this endpoint
+      - `url`: The wallet endpoint host url
+      - `token`: The access token for making secure requests to the host url (powered by [Nuronpress](https://nuronpress.cell.computer))
+    - `nuron`: a single endpoint that handle all of the above `workspace` and `wallet` requests
+      - `url`: The wallet endpoint host url
+      - `token`: The access token for making secure requests to the host url (powered by [Nuronpress](https://nuronpress.cell.computer))
 
 ##### return value
 
 - `nuron`: initialized nuron client that can talk to the local nuron engine.
 
 #### examples
+
+##### 1. connecting to a local nuron node
 
 ```javascript
 const nuron = new Nuron({
@@ -114,10 +126,11 @@ const nuron = new Nuron({
 
 Above code declares that every request made from this instantiated client will:
 
-1. sign with the key at key path `m'/44'/60'/0'/0/0`
-2. write all the files under the `cube/fs` folder
-3. write all the DB entries inside a SQLite DB at path `cube/db/mixtape.db`
-3. use the specified domain for creating tokens.
+1. point to http://localhost:42000 (the default local nuron url)
+2. sign with the key at key path `m'/44'/60'/0'/0/0`
+3. write all the files under the `cube/fs` folder
+4. write all the DB entries inside a SQLite DB at path `cube/db/mixtape.db`
+5. use the specified domain for creating tokens.
 
 It will create a folder structure that looks like this:
 
@@ -145,6 +158,34 @@ From this point on,
 
 > Note that you DO NOT have to worry about how all of this is stored when using Nuron, since you can simply use the Nuron API to interact with the DB and the File System.
 
+##### 2. connecting to a remote nuron node
+
+To connect to a remote Nuron ([Nuronpress](https://nuronpress.cell.computer)), simply specify an additional `node` attribute:
+
+```javascript
+const nuron = new Nuron({
+  node: {
+    nuron: {
+      url: <CUSTOM NURONPRESS HOST URL>,
+      token: <ACCESS TOKEN>                 // required for Nuron, not required for Nurond
+    }
+  },
+  key: "m'/44'/60'/0'/0/0",
+  workspace: "cube",
+  domain: {
+    "address":"0x93f4f1e0dca38dd0d35305d57c601f829ee53b51",
+    "chainId":4,
+    "name":"_test_"
+  }
+})
+```
+
+The only different part here is the custom `node` attribute. When you specify the `node` attribute, nuronjs will connect to the specified endpoint (`url`) with the specified access token (`token`).
+
+Nuronjs is able to connect to both [Nurond](https://nurond.cell.computer) and [Nuron](https://nuron.cell.computer) instances.
+
+1. **Nurond:** Nurond is like the low level kernel. Nurond is the local nuron daemon designed to run locally, so you do not need to pass the `token` attribute when making requests to nurond.
+2. **Nuron:** Nuron is like the high level OS (Operating System). It packages Nurond with an authentication module. Therefore when you're connecting to a Nuron instance, you MUST specify an access token.
 
 ### config()
 
@@ -1256,5 +1297,36 @@ await nuron.web.build({
     dest: "token.html"                                // renders to the token.html file
   }]
 })
+```
+
+
+### publish()
+
+Copy all workspace files and folders into the `published` folder. 
+
+- All files in the `published` folder is publicly accessible by the general public.
+- Everything else is private only to the admin.
+
+#### syntax
+
+```javascript
+await nuron.web.publish()
+```
+
+##### parameters
+
+- none
+
+##### return value
+
+- none
+
+
+#### examples
+
+Run the following comand, and you'll find a new `published` folder appear under your workspace.
+
+```javascript
+await nuron.web.publish()
 ```
 
